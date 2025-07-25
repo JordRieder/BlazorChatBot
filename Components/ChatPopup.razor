@@ -1,0 +1,58 @@
+﻿@using BlazorChatBot.Services
+@inject IChatBotService ChatBotService
+
+<link href="css/site.css" rel="stylesheet" />
+
+<div class="chat-container">
+    <button class="chat-toggle-button" @onclick="TogglePopup">
+        <img src="imgs/chat.png" alt="Chat" />
+    </button>
+
+    @if (isOpen)
+    {
+        <div class="chat-popup">
+            <div class="chat-header" @onclick="TogglePopup">ChatBot</div>
+            <div class="chat-body">
+                
+                <div class="chat-box">
+                    @foreach (var msg in messages)
+                    {
+                        <div class="chat-message @(msg.StartsWith("Bot:") ? "bot" : "user")">@msg</div>
+                    }
+
+                    @if (isLoading)
+                    {
+                        <div class="chat-message bot">Bot is typing<span class="dots">...</span></div>
+                    }
+                </div>
+
+                <div class="chat-input">
+                    <input @bind="userInput" @bind:event="oninput" placeholder="Type your message..." />
+                    <button @onclick="SendMessage">Send</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    string userInput = "";
+    List<string> messages = new();
+    bool isOpen = false;
+    bool isLoading = false;
+
+
+    async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(userInput)) return;
+
+        messages.Add($"You: {userInput}");
+        isLoading = true;
+        var response = await ChatBotService.AskAsync(userInput);
+        isLoading = false;
+        messages.Add($"Bot: {response}");
+        userInput = "";
+    }
+
+    void TogglePopup() => isOpen = !isOpen;
+}
