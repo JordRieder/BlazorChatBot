@@ -1,0 +1,47 @@
+[
+  {
+    "keywords": [ "titanic" ],
+    "type": "append",
+    "file": "Titanic.txt"
+  },
+  {
+    "keywords": [ "matrix" ],
+    "type": "override",
+    "file": "Matrix.txt"
+  },
+  {
+    "keywords": [ "netflix" ],
+    "type": "append",
+    "file": "Netflix.txt"
+  },
+  {
+    "keywords": [ "redbox", "red box" ],
+    "type": "append",
+    "file": "Redbox.txt"
+  },
+  {
+    "keywords": [ "late fee" ],
+    "type": "append",
+    "file": "LateFee.txt"
+  },
+  {
+    "keywords": [ "return policy", "refund" ],
+    "type": "append",
+    "file": "ReturnPolicy.txt"
+  },
+  {
+    "keywords": [ "cancel", "membership" ],
+    "type": "append",
+    "file": "CancelMembership.txt"
+  },
+  {
+    "keywords": [ "membership" ],
+    "type": "append",
+    "file": "Membership.txt"
+  },
+  {
+    "keywords": [ "movie", "price", "how much" ],
+    "type": "append",
+    "file": "Membership.txt"
+  }
+]

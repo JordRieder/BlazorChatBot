@@ -27,7 +27,10 @@
                 </div>
 
                 <div class="chat-input">
-                    <input @bind="userInput" @bind:event="oninput" placeholder="Type your message..." />
+                    <input @bind="userInput" @bind:event="oninput"
+                           @onkeydown="HandleKeyPress"
+                           placeholder="Type your message..." />
+
                     <button @onclick="SendMessage">Send</button>
                 </div>
             </div>
@@ -55,4 +58,13 @@
     }
 
     void TogglePopup() => isOpen = !isOpen;
+
+    void HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            _ = SendMessage(); // Fire async method without awaiting
+        }
+    }
+
 }

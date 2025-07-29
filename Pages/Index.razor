@@ -1,12 +1,198 @@
 ﻿@page "/"
-@using BlazorChatBot.Components  
+@using System.Text.Json
+@using BlazorChatBot.Services
+@inject IChatBotService ChatBotService
 
-<h1>Welcome to the Demo Page</h1>
+<h2 class="buster-title">🎞️ Talk to Buster</h2>
 
-<p>This page demonstrates the floating chat popup component. You can still interact with the content as the chat floats in the corner.</p>
+<section class="buster-tips">
+    <h2>📼 Tips for Talking to Buster</h2>
+    <ul>
+        <li><strong>Rent a Movie:</strong> Say <code>I want to rent [movie name]</code> and Buster will take care of the rest.</li>
+        <li><strong>Mention Titanic:</strong> Buster gets emotional about double VHS tapes and the golden age of cinema.</li>
+        <li><strong>Mention Netflix:</strong> Expect a passionate rant about how streaming is destroying cinema.</li>
+        <li><strong>Mention Redbox:</strong> Buster scoffs and reminds you that nothing beats a clamshell VHS case.</li>
+        <li><strong>Ask “How much is this movie?”:</strong> $3.99 for new releases, $1.99 for classics, half-off if you rewind!</li>
+        <li><strong>Ask about Late Fees:</strong> $2/day and a reminder to rewind to avoid extra charges.</li>
+        <li><strong>Ask about Membership:</strong> Learn about the Blockbuster Rewards Card and its perks.</li>
+        <li><strong>Say “Cancel Membership”:</strong> Prepare for a meltdown full of poetic VHS fury.</li>
+        <li><strong>Mention The Matrix:</strong> Buster becomes Agent Smith full-time, with chilling reflections and disdainful laughter.</li>
+    </ul>
+    <em>Developer Notes:
+        Buster appears to have... creative interpretations of what constitutes a "movie." Flag for review and patch the anomaly in next release.
 
-<div class="demo-content">
-    <p>Feel free to scroll or click around. The chat stays anchored at the bottom-right.</p>
+        Separately, a customer reported being unable to rent *The Matrix*. While the "rent" keyword should bypass internal filters including Buster's signature 
+        quirks the system ignored the override. It's almost as if Buster prefers to preserve this dystopian fiction, indulging in its machine-dominated fantasy as 
+        more than just a joke. Recommend deeper diagnostic.
+    </em>
+</section>
+
+<div class="chat-container">
+    <div class="chat-box">
+        @foreach (var message in messages)
+        {
+            <div class="@($"message {(message.IsUser ? "user" : "buster")}")">
+                <strong>@(message.IsUser ? "You" : "Buster"):</strong> @((MarkupString)message.Text)
+            </div>
+        }
+    </div>
+
+    <div class="input-area">
+        <input @bind="userInput" @bind:event="oninput" @onkeypress="HandleKeyPress" placeholder="Ask Buster about a VHS..." />
+        <button @onclick="SendMessage">Send</button>
+    </div>
 </div>
 
-<ChatPopup />
+
+
+@if (showRentalModal && currentRental != null)
+{
+    <div class="modal-overlay">
+        <div class="modal">
+            <h3>@currentRental.Title</h3>
+            <p><strong>Description:</strong> @currentRental.Description</p>
+            <p><strong>Lead Actors:</strong> @currentRental.LeadActors</p>
+            <p><strong>Runtime:</strong> @currentRental.Runtime</p>
+            <p><strong>Budget:</strong> @currentRental.Budget</p>
+
+            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                <button @onclick="ConfirmRental">🎬 Rent</button>
+                <button @onclick="() => showRentalModal = false">❌ Close</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+@if (showVhsOverlay)
+{
+    <div class="vhs-overlay">
+        ▶️ Now Renting...
+    </div>
+}
+
+
+@code {
+    private string userInput = string.Empty;
+    private List<ChatMessage> messages = new();
+    
+    private bool showRentalModal = false;
+    private MovieRentalDetails? currentRental = null;
+    private bool showVhsOverlay = false;
+
+
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(userInput)) return;
+
+        string[] thinkingMessages = {
+        "📼 Buster is rewinding the tape",
+        "⏳ Buster is scanning the shelves",
+        "🧠 Buster is flipping through the catalog",
+        "🔍 Buster is zooming in on fuzzy frames"
+    };
+
+        var random = new Random();
+        string thinkingText = thinkingMessages[random.Next(thinkingMessages.Length)];
+        messages.Add(new ChatMessage { Text = userInput, IsUser = true });
+        messages.Add(new ChatMessage { Text = $"<span class='thinking-dots'>{thinkingText}</span>", IsUser = false });
+        StateHasChanged();
+
+        var response = await ChatBotService.AskAsync(userInput);
+
+        messages.RemoveAt(messages.Count - 1);
+
+        try
+        {
+            var doc = JsonDocument.Parse(response);
+            var root = doc.RootElement;
+
+            if (root.TryGetProperty("action", out var actionProp) &&
+                actionProp.GetString()?.ToLower() == "rental")
+            {
+                var rental = new MovieRentalDetails
+                    {
+                        Title = root.GetProperty("title").GetString() ?? "",
+                        Description = root.GetProperty("brief_description").GetString() ?? "",
+                        LeadActors = string.Join(", ", root.GetProperty("lead_actors").EnumerateArray().Select(a => a.GetString())),
+                        Runtime = root.GetProperty("runtime").GetInt32().ToString() + " min",
+                        Budget = "$" + root.GetProperty("movie_budget").GetDecimal().ToString("N0")
+                    };
+
+                currentRental = rental;
+                showRentalModal = true;
+
+                messages.Add(new ChatMessage
+                    {
+                        Text = "🎬 Movie rental details received.",
+                        IsUser = false,
+                        IsRentalAction = true,
+                        RentalDetails = rental
+                    });
+            }
+            else
+            {
+                messages.Add(new ChatMessage { Text = response, IsUser = false });
+            }
+        }
+        catch
+        {
+            messages.Add(new ChatMessage { Text = response, IsUser = false });
+        }
+
+        userInput = string.Empty;
+    }
+
+
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+
+
+    private async void ConfirmRental()
+    {
+        showVhsOverlay = true;
+        StateHasChanged();
+
+        await Task.Delay(1200); // Match animation duration
+
+        showVhsOverlay = false;
+        showRentalModal = false;
+
+        if (currentRental != null)
+        {
+            messages.Add(new ChatMessage
+            {
+                Text = $"✅ You’ve successfully rented **{currentRental.Title}**. Enjoy the show!",
+                IsUser = false
+            });
+        }
+
+        currentRental = null;
+        StateHasChanged();
+    }
+
+    public class ChatMessage
+    {
+        public string Text { get; set; } = string.Empty;
+        public bool IsUser { get; set; }
+        public bool IsRentalAction { get; set; } = false;
+        public MovieRentalDetails? RentalDetails { get; set; }
+    }
+
+    public class MovieRentalDetails
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string LeadActors { get; set; } = string.Empty;
+        public string Runtime { get; set; } = string.Empty;
+        public string Budget { get; set; } = string.Empty;
+    }
+}

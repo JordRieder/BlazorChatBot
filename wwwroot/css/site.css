@@ -1,129 +1,244 @@
-.chat-container {
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+
+.modal-overlay {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.chat-toggle-button {
-    width: 60px;
-    height: 60px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    padding: 0;
-}
-
-    .chat-toggle-button img {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-
-.chat-popup {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 320px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    overflow: hidden;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.chat-header {
-    background-color: #0078d4;
-    color: white;
-    padding: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-}
-
-.chat-body {
-    padding: 10px;
-}
-
-.chat-box {
-    max-height: 200px;
-    overflow-y: auto;
-    background: #f9f9f9;
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    border-radius: 4px;
-}
-
-.chat-message {
-    margin-bottom: 8px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-}
-
-    .chat-message.user {
-        background-color: #e0e0e0;
-        color: #333;
-        text-align: right;
-    }
-
-    .chat-message.bot {
-        background-color: #e6f2ff;
-        color: #0078d4;
-        text-align: left;
-    }
-
-.chat-input {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-family: 'Press Start 2P', cursive;
 }
 
-    .chat-input input {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+.modal {
+    background-color: #0033A0;
+    color: #FFD700;
+    padding: 30px;
+    border: 4px solid #FFD700;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    text-align: left;
+    font-size: 0.75rem;
+    line-height: 1.8;
+}
+
+    .modal h3 {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        border-bottom: 2px solid #FFD700;
+        padding-bottom: 10px;
     }
 
-    .chat-input button {
-        padding: 8px 12px;
-        background-color: #0078d4;
-        color: white;
+    .modal p {
+        margin: 10px 0;
+    }
+
+    .modal button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #FFD700;
+        color: #0033A0;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.75rem;
         cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
-        .chat-input button:hover {
-            background-color: #005fa3;
+        .modal button:hover {
+            background-color: #FFC107;
         }
 
 
-.dots::after {
+.buster-title {
+    font-family: 'Press Start 2P', cursive;
+    color: #FFD700;
+    background-color: #0033A0;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    text-transform: uppercase;
+}
+
+.chat-container {
+    max-width: 700px;
+    margin: 30px auto;
+    background-color: #FFF;
+    border: 4px solid #0033A0;
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'Press Start 2P', cursive;
+    background-color: #fefefe;
+}
+
+.chat-box {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.message {
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.user {
+    background-color: #FFD700;
+    color: #000;
+    text-align: right;
+    border-left: 5px solid #0033A0;
+}
+
+.buster {
+    background-color: #0033A0;
+    color: #FFD700;
+    text-align: left;
+    border-right: 5px solid #FFD700;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #0033A0;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Press Start 2P', cursive;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #FFD700;
+    color: #0033A0;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #FFC107;
+    }
+
+.thinking-dots::after {
     content: '';
     display: inline-block;
-    width: 1em;
-    text-align: left;
-    animation: dots 1.2s steps(3, end) infinite;
+    animation: dots 1.5s steps(1, end) infinite;
 }
 
 @keyframes dots {
-    0% { content: ''; }
-    33% { content: '.'; }
-    66% { content: '..'; }
-    100% { content: '...'; }
-}
-
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
+    0% {
+        content: '';
     }
 
-    to {
+    25% {
+        content: '.';
+    }
+
+    50% {
+        content: '..';
+    }
+
+    75% {
+        content: '...';
+    }
+}
+
+@keyframes vhsFlicker {
+    0% {
         opacity: 1;
-        transform: translateY(0);
+        transform: scale(1);
+    }
+
+    10% {
+        opacity: 0.8;
+        transform: scale(1.01);
+    }
+
+    20% {
+        opacity: 0.6;
+        transform: scale(0.99);
+    }
+
+    30% {
+        opacity: 0.9;
+        transform: scale(1.02);
+    }
+
+    40% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.01);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
     }
 }
+
+.vhs-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    color: #00FF00;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: vhsFlicker 1.2s ease-in-out;
+    pointer-events: none;
+}
+
+
+.buster-tips {
+    background-color: #fdf6e3;
+    border: 2px dashed #0047ab;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+    .buster-tips h3 {
+        color: #0047ab;
+        margin-bottom: 0.5rem;
+    }
+
+    .buster-tips ul {
+        list-style-type: '?? ';
+        padding-left: 1.5rem;
+    }

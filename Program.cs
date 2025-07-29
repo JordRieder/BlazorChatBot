@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using BlazorChatBot.Services;
+using BlazorChatBot.Prompts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,13 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddScoped<IChatBotService, GemmaService>();
+
+builder.Services.AddScoped<PromptBuilder>(provider =>
+{
+    var promptsDirectory = Path.Combine(AppContext.BaseDirectory, "Prompts");
+    return new PromptBuilder(promptsDirectory);
+});
+builder.Services.AddScoped<IChatBotService, BusterService>();
 
 var app = builder.Build();
 
