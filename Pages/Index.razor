@@ -1,150 +1,241 @@
 ﻿@page "/"
-@using System.Text.Json
 @using BlazorChatBot.Services
+@using Microsoft.AspNetCore.Components.Forms
 @inject IChatBotService ChatBotService
+@inject RagDatabaseService RagService
 
-<h2 class="buster-title">🎞️ Talk to Buster</h2>
+<h2 class="hogwarts-title">🪄 Speak with Quill</h2>
+<h3 style="text-align: center; color: black;">
+    <em>Your Hogwarts AI companion, a data-driven LLM.</em>
+</h3>
 
-<section class="buster-tips">
-    <h2>📼 Tips for Talking to Buster</h2>
-    <ul>
-        <li><strong>Rent a Movie:</strong> Say <code>I want to rent [movie name]</code> and Buster will take care of the rest.</li>
-        <li><strong>Mention Titanic:</strong> Buster gets emotional about double VHS tapes and the golden age of cinema.</li>
-        <li><strong>Mention Netflix:</strong> Expect a passionate rant about how streaming is destroying cinema.</li>
-        <li><strong>Mention Redbox:</strong> Buster scoffs and reminds you that nothing beats a clamshell VHS case.</li>
-        <li><strong>Ask “How much is this movie?”:</strong> $3.99 for new releases, $1.99 for classics, half-off if you rewind!</li>
-        <li><strong>Ask about Late Fees:</strong> $2/day and a reminder to rewind to avoid extra charges.</li>
-        <li><strong>Ask about Membership:</strong> Learn about the Blockbuster Rewards Card and its perks.</li>
-        <li><strong>Say “Cancel Membership”:</strong> Prepare for a meltdown full of poetic VHS fury.</li>
-        <li><strong>Mention The Matrix:</strong> Buster becomes Agent Smith full-time, with chilling reflections and disdainful laughter.</li>
-    </ul>
-    <em>Developer Notes:
-        Buster appears to have... creative interpretations of what constitutes a "movie." Flag for review and patch the anomaly in next release.
+<!-- Document Import Section -->
+<div class="import-section" style="margin-bottom: 20px; text-align: center;">
+    <div class="import-controls">
+        <InputFile OnChange="HandleFileSelection" multiple accept=".txt" />
 
-        Separately, a customer reported being unable to rent *The Matrix*. While the "rent" keyword should bypass internal filters including Buster's signature 
-        quirks the system ignored the override. It's almost as if Buster prefers to preserve this dystopian fiction, indulging in its machine-dominated fantasy as 
-        more than just a joke. Recommend deeper diagnostic.
-    </em>
-</section>
+        @if (!string.IsNullOrEmpty(importStatus))
+        {
+            <div class="import-status @(importSuccess ? "success" : "error")" style="margin-top: 10px;">
+                @importStatus
+            </div>
+        }
+
+        @if (documentCount > 0)
+        {
+            <div class="document-info" style="margin-top: 10px; color: #666;">
+                📚 Documents in knowledge base: @documentCount
+            </div>
+        }
+    </div>
+</div>
 
 <div class="chat-container">
     <div class="chat-box">
         @foreach (var message in messages)
         {
-            <div class="@($"message {(message.IsUser ? "user" : "buster")}")">
-                <strong>@(message.IsUser ? "You" : "Buster"):</strong> @((MarkupString)message.Text)
+            <div class="@($"message {(message.IsUser ? "student" : "quill")}")">
+                <strong>@(message.IsUser ? "You" : "Quill"):</strong> @((MarkupString)message.Text)
             </div>
         }
     </div>
-
     <div class="input-area">
-        <input @bind="userInput" @bind:event="oninput" @onkeypress="HandleKeyPress" placeholder="Ask Buster about a VHS..." />
-        <button @onclick="SendMessage">Send</button>
+        <input class="hogwarts-input" @bind="userInput" @bind:event="oninput" @onkeypress="HandleKeyPress" placeholder="Ask about professors, classes, or magical events..." />
+        <button class="hogwarts-button" @onclick="SendMessage">Send</button>
     </div>
 </div>
 
+<style>
+    .import-section {
+        border: 2px dashed #8B4513;
+        border-radius: 10px;
+        padding: 20px;
+        background: linear-gradient(135deg, #f4f1e8 0%, #e8dcc0 100%);
+        margin: 20px 0;
+    }
 
+        .import-section input[type="file"] {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
+            width: auto;
+        }
 
-@if (showRentalModal && currentRental != null)
-{
-    <div class="modal-overlay">
-        <div class="modal">
-            <h3>@currentRental.Title</h3>
-            <p><strong>Description:</strong> @currentRental.Description</p>
-            <p><strong>Lead Actors:</strong> @currentRental.LeadActors</p>
-            <p><strong>Runtime:</strong> @currentRental.Runtime</p>
-            <p><strong>Budget:</strong> @currentRental.Budget</p>
+            .import-section input[type="file"]:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(139, 69, 19, 0.4);
+            }
 
-            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-                <button @onclick="ConfirmRental">🎬 Rent</button>
-                <button @onclick="() => showRentalModal = false">❌ Close</button>
-            </div>
-        </div>
-    </div>
-}
+            .import-section input[type="file"]::file-selector-button {
+                background: transparent;
+                border: none;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+                padding: 0;
+                margin-right: 10px;
+            }
 
+    .import-status {
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
 
-@if (showVhsOverlay)
-{
-    <div class="vhs-overlay">
-        ▶️ Now Renting...
-    </div>
-}
+        .import-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
 
+        .import-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+    .document-info {
+        font-style: italic;
+        font-size: 14px;
+    }
+</style>
 
 @code {
     private string userInput = string.Empty;
     private List<ChatMessage> messages = new();
-    
-    private bool showRentalModal = false;
-    private MovieRentalDetails? currentRental = null;
-    private bool showVhsOverlay = false;
+    private bool isImporting = false;
+    private string importStatus = string.Empty;
+    private bool importSuccess = false;
+    private int documentCount = 0;
 
+    protected override async Task OnInitializedAsync()
+    {
+        // Load initial document count
+        await LoadDocumentCount();
+    }
 
+    private async Task HandleFileSelection(InputFileChangeEventArgs e)
+    {
+        if (e.FileCount == 0) return;
+
+        isImporting = true;
+        importStatus = "📚 Processing files...";
+        StateHasChanged();
+
+        try
+        {
+            var importedCount = 0;
+            var skippedCount = 0;
+            var errorCount = 0;
+
+            foreach (var file in e.GetMultipleFiles(10)) // Limit to 10 files
+            {
+                try
+                {
+                    if (!file.Name.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue; // Skip non-txt files
+                    }
+
+                    using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB limit
+                    using var reader = new StreamReader(stream);
+                    var content = await reader.ReadToEndAsync();
+
+                    if (string.IsNullOrWhiteSpace(content))
+                    {
+                        skippedCount++;
+                        continue;
+                    }
+
+                    // Check if document already exists
+                    if (await RagService.DocumentExistsAsync(content))
+                    {
+                        skippedCount++;
+                        continue;
+                    }
+
+                    // Import the document
+                    await RagService.InsertDocumentWithVectorAsync(content);
+                    importedCount++;
+
+                    // Update status during import
+                    importStatus = $"📚 Imported {importedCount} documents...";
+                    StateHasChanged();
+                }
+                catch (Exception ex)
+                {
+                    errorCount++;
+                    Console.WriteLine($"Error importing file {file.Name}: {ex.Message}");
+                }
+            }
+
+            // Final status message
+            var statusParts = new List<string>();
+
+            if (importedCount > 0)
+                statusParts.Add($"✅ {importedCount} document{(importedCount == 1 ? "" : "s")} imported");
+
+            if (skippedCount > 0)
+                statusParts.Add($"⏭️ {skippedCount} skipped (duplicates or empty)");
+
+            if (errorCount > 0)
+                statusParts.Add($"❌ {errorCount} failed");
+
+            importStatus = statusParts.Any() ? string.Join(" | ", statusParts) : "No files processed";
+            importSuccess = importedCount > 0;
+
+            // Refresh document count
+            await LoadDocumentCount();
+        }
+        catch (Exception ex)
+        {
+            importStatus = $"❌ Import failed: {ex.Message}";
+            importSuccess = false;
+        }
+        finally
+        {
+            isImporting = false;
+            StateHasChanged();
+
+            // Clear status after a few seconds
+            _ = Task.Delay(5000).ContinueWith(_ =>
+            {
+                importStatus = string.Empty;
+                InvokeAsync(StateHasChanged);
+            });
+        }
+    }
+
+    private async Task LoadDocumentCount()
+    {
+        try
+        {
+            documentCount = await RagService.GetDocumentCountAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading document count: {ex.Message}");
+            documentCount = 0;
+        }
+    }
 
     private async Task SendMessage()
     {
         if (string.IsNullOrWhiteSpace(userInput)) return;
-
-        string[] thinkingMessages = {
-        "📼 Buster is rewinding the tape",
-        "⏳ Buster is scanning the shelves",
-        "🧠 Buster is flipping through the catalog",
-        "🔍 Buster is zooming in on fuzzy frames"
-    };
-
-        var random = new Random();
-        string thinkingText = thinkingMessages[random.Next(thinkingMessages.Length)];
         messages.Add(new ChatMessage { Text = userInput, IsUser = true });
-        messages.Add(new ChatMessage { Text = $"<span class='thinking-dots'>{thinkingText}</span>", IsUser = false });
+        messages.Add(new ChatMessage { Text = "<em>✨ Quill is scribbling furiously...</em>", IsUser = false });
         StateHasChanged();
-
         var response = await ChatBotService.AskAsync(userInput);
-
         messages.RemoveAt(messages.Count - 1);
-
-        try
-        {
-            var doc = JsonDocument.Parse(response);
-            var root = doc.RootElement;
-
-            if (root.TryGetProperty("action", out var actionProp) &&
-                actionProp.GetString()?.ToLower() == "rental")
-            {
-                var rental = new MovieRentalDetails
-                    {
-                        Title = root.GetProperty("title").GetString() ?? "",
-                        Description = root.GetProperty("brief_description").GetString() ?? "",
-                        LeadActors = string.Join(", ", root.GetProperty("lead_actors").EnumerateArray().Select(a => a.GetString())),
-                        Runtime = root.GetProperty("runtime").GetInt32().ToString() + " min",
-                        Budget = "$" + root.GetProperty("movie_budget").GetDecimal().ToString("N0")
-                    };
-
-                currentRental = rental;
-                showRentalModal = true;
-
-                messages.Add(new ChatMessage
-                    {
-                        Text = "🎬 Movie rental details received.",
-                        IsUser = false,
-                        IsRentalAction = true,
-                        RentalDetails = rental
-                    });
-            }
-            else
-            {
-                messages.Add(new ChatMessage { Text = response, IsUser = false });
-            }
-        }
-        catch
-        {
-            messages.Add(new ChatMessage { Text = response, IsUser = false });
-        }
-
+        messages.Add(new ChatMessage { Text = response, IsUser = false });
         userInput = string.Empty;
     }
-
-
 
     private async Task HandleKeyPress(KeyboardEventArgs e)
     {
@@ -154,45 +245,9 @@
         }
     }
 
-
-
-    private async void ConfirmRental()
-    {
-        showVhsOverlay = true;
-        StateHasChanged();
-
-        await Task.Delay(1200); // Match animation duration
-
-        showVhsOverlay = false;
-        showRentalModal = false;
-
-        if (currentRental != null)
-        {
-            messages.Add(new ChatMessage
-            {
-                Text = $"✅ You’ve successfully rented **{currentRental.Title}**. Enjoy the show!",
-                IsUser = false
-            });
-        }
-
-        currentRental = null;
-        StateHasChanged();
-    }
-
     public class ChatMessage
     {
         public string Text { get; set; } = string.Empty;
         public bool IsUser { get; set; }
-        public bool IsRentalAction { get; set; } = false;
-        public MovieRentalDetails? RentalDetails { get; set; }
-    }
-
-    public class MovieRentalDetails
-    {
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string LeadActors { get; set; } = string.Empty;
-        public string Runtime { get; set; } = string.Empty;
-        public string Budget { get; set; } = string.Empty;
     }
 }

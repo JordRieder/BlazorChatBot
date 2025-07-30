@@ -1,244 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    font-family: 'Press Start 2P', cursive;
+﻿body {
+    background: url('/images/hogwarts-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Garamond', serif;
+    color: #f5f5dc;
 }
 
-.modal {
-    background-color: #0033A0;
-    color: #FFD700;
-    padding: 30px;
-    border: 4px solid #FFD700;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-    text-align: left;
-    font-size: 0.75rem;
-    line-height: 1.8;
-}
-
-    .modal h3 {
-        font-size: 1rem;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-        border-bottom: 2px solid #FFD700;
-        padding-bottom: 10px;
-    }
-
-    .modal p {
-        margin: 10px 0;
-    }
-
-    .modal button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        background-color: #FFD700;
-        color: #0033A0;
-        border: none;
-        border-radius: 6px;
-        font-family: 'Press Start 2P', cursive;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-        .modal button:hover {
-            background-color: #FFC107;
-        }
-
-
-.buster-title {
-    font-family: 'Press Start 2P', cursive;
-    color: #FFD700;
-    background-color: #0033A0;
-    padding: 15px;
-    border-radius: 8px;
+.hogwarts-title {
     text-align: center;
-    font-size: 1.5rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    text-transform: uppercase;
+    font-size: 2rem;
+    margin-top: 1rem;
+    color: #ffd700;
+    text-shadow: 1px 1px 4px #000;
 }
 
 .chat-container {
     max-width: 700px;
-    margin: 30px auto;
-    background-color: #FFF;
-    border: 4px solid #0033A0;
+    margin: 2rem auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 2px solid #8b4513;
     border-radius: 12px;
-    padding: 20px;
-    font-family: 'Press Start 2P', cursive;
-    background-color: #fefefe;
+    padding: 1rem;
+    box-shadow: 0 0 20px #000;
 }
 
 .chat-box {
-    max-height: 400px;
+    max-height: 60vh;
     overflow-y: auto;
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #f9f9f9;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
+    margin-bottom: 1rem;
 }
 
 .message {
-    margin: 10px 0;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    line-height: 1.6;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 10px;
+    max-width: 80%;
     word-wrap: break-word;
 }
 
-.user {
-    background-color: #FFD700;
-    color: #000;
-    text-align: right;
-    border-left: 5px solid #0033A0;
-}
+    .message.student {
+        background-color: rgba(173, 216, 230, 0.2);
+        text-align: right;
+        margin-left: auto;
+    }
 
-.buster {
-    background-color: #0033A0;
-    color: #FFD700;
-    text-align: left;
-    border-right: 5px solid #FFD700;
-}
+    .message.quill {
+        background-color: rgba(255, 255, 255, 0.1);
+        text-align: left;
+        margin-right: auto;
+    }
 
 .input-area {
     display: flex;
-    gap: 10px;
+    gap: 0.5rem;
 }
 
-input {
+.hogwarts-input {
     flex: 1;
-    padding: 12px;
-    border: 2px solid #0033A0;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-family: 'Press Start 2P', cursive;
-}
-
-button {
-    padding: 12px 20px;
-    background-color: #FFD700;
-    color: #0033A0;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: 'Press Start 2P', cursive;
-    transition: background-color 0.3s ease;
-}
-
-    button:hover {
-        background-color: #FFC107;
-    }
-
-.thinking-dots::after {
-    content: '';
-    display: inline-block;
-    animation: dots 1.5s steps(1, end) infinite;
-}
-
-@keyframes dots {
-    0% {
-        content: '';
-    }
-
-    25% {
-        content: '.';
-    }
-
-    50% {
-        content: '..';
-    }
-
-    75% {
-        content: '...';
-    }
-}
-
-@keyframes vhsFlicker {
-    0% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    10% {
-        opacity: 0.8;
-        transform: scale(1.01);
-    }
-
-    20% {
-        opacity: 0.6;
-        transform: scale(0.99);
-    }
-
-    30% {
-        opacity: 0.9;
-        transform: scale(1.02);
-    }
-
-    40% {
-        opacity: 0.7;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.01);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.vhs-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: black;
-    color: #00FF00;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    animation: vhsFlicker 1.2s ease-in-out;
-    pointer-events: none;
-}
-
-
-.buster-tips {
-    background-color: #fdf6e3;
-    border: 2px dashed #0047ab;
-    padding: 1rem;
-    margin: 1rem 0;
+    padding: 0.75rem;
     border-radius: 8px;
-    font-family: 'Courier New', Courier, monospace;
+    border: 1px solid #ccc;
+    background-color: #2f2f2f;
+    color: #fff;
 }
 
-    .buster-tips h3 {
-        color: #0047ab;
-        margin-bottom: 0.5rem;
-    }
+.hogwarts-button {
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
 
-    .buster-tips ul {
-        list-style-type: '?? ';
-        padding-left: 1.5rem;
+    .hogwarts-button:hover {
+        background-color: #483d8b;
     }

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorChatBot.Prompts
 {
@@ -36,13 +37,16 @@ namespace BlazorChatBot.Prompts
         }
     }
 
+    
     public class PromptRule
     {
+        [JsonPropertyName("keywords")]
         public string[] Keywords { get; set; } = Array.Empty<string>();
+
+        [JsonPropertyName("file")]
         public string File { get; set; } = string.Empty;
-        public string Type { get; set; } = "append"; // or "override"
+
+        [JsonPropertyName("type")]
+        public string Type { get; set; } = "append";
     }
-
-
-
 }

@@ -1,0 +1,31 @@
+Faculty Overview – Hogwarts School of Witchcraft and Wizardry
+
+Professor Albus Dumbledore  
+Role: Headmaster  
+Class: None (administrative role)  
+Office Hours: By appointment only  
+Office Location: Headmaster’s Tower  
+
+Professor Minerva McGonagall  
+Role: Deputy Headmistress, Head of Gryffindor House  
+Class: Transfiguration (Years 1–7)  
+Office Hours: Mondays and Wednesdays, 3:00 PM – 5:00 PM  
+Office Location: Transfiguration Classroom, First Floor  
+
+Professor Severus Snape  
+Role: Potions Master, Head of Slytherin House  
+Class: Potions (Years 1–7)  
+Office Hours: Tuesdays and Thursdays, 4:00 PM – 6:00 PM *(assumed; let me know if you have specifics)*  
+Office Location: Potions Classroom, Dungeon 5  
+
+Professor Filius Flitwick  
+Role: Charms Master, Head of Ravenclaw House  
+Class: Charms (Years 1–7)  
+Office Hours: Mondays and Fridays, 2:00 PM – 4:00 PM  
+Office Location: Charms Classroom, Third Floor  
+
+Professor Micheal Bell  
+Role: Defense Against the Dark Arts Professor, Head of Hufflepuff House  
+Class: Defense Against the Dark Arts (Years 1–7)  
+Office Hours: Wednesdays and Saturdays, 1:00 PM – 3:00 PM  
+Office Location: Defense Classroom, Second Floor

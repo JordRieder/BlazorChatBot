@@ -1,23 +1,23 @@
+using BlazorChatBot.Prompts;
+using BlazorChatBot.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using BlazorChatBot.Services;
-using BlazorChatBot.Prompts;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
 builder.Services.AddHttpClient();
-
 
 builder.Services.AddScoped<PromptBuilder>(provider =>
 {
     var promptsDirectory = Path.Combine(AppContext.BaseDirectory, "Prompts");
     return new PromptBuilder(promptsDirectory);
 });
-builder.Services.AddScoped<IChatBotService, BusterService>();
+builder.Services.AddScoped<IChatBotService, SemanticChatBotService>();
+builder.Services.AddScoped<RagDatabaseService>();
 
 var app = builder.Build();
 

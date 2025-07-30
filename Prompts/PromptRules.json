@@ -1,47 +1,72 @@
 [
   {
-    "keywords": [ "titanic" ],
+    "keywords": [ "snape", "potions", "severus", "head of house", "slytherin", "faculty" ],
     "type": "append",
-    "file": "Titanic.txt"
+    "file": "Faculty/Snape.txt"
   },
   {
-    "keywords": [ "matrix" ],
+    "keywords": [ "headmaster", "dumbledore", "albus", "president", "admin" ],
+    "type": "append",
+    "file": "Faculty/Dumbledore.txt"
+  },
+  {
+    "keywords": [ "head of house", "gryffindor", "transfiguration", "headmistress", "deputy", "minerva", "mcgonagall", "faculty" ],
+    "type": "append",
+    "file": "Faculty/McGonagall.txt"
+  },
+  {
+    "keywords": [ "filius", "filius's'", "flitwick", "charms", "head of house", "ravenclaw", "faculty" ],
+    "type": "append",
+    "file": "Faculty/Flitwick.txt"
+  },
+  {
+    "keywords": [ "bell", "micheal", "defense", "dark arts", "head of house", "hufflepuff", "faculty" ],
+    "type": "append",
+    "file": "Faculty/Bell.txt"
+  },
+  {
+    "keywords": [ "charms" ],
+    "type": "append",
+    "file": "Classes/Charms.txt"
+  },
+  {
+    "keywords": [ "defense", "dark arts" ],
+    "type": "append",
+    "file": "Classes/DefenseAgainstTheDarkArts.txt"
+  },
+  {
+    "keywords": [ "transfiguration" ],
+    "type": "append",
+    "file": "Classes/Transfiguration.txt"
+  },
+  {
+    "keywords": [ "potions" ],
+    "type": "append",
+    "file": "Classes/Potions.txt"
+  },
+  {
+    "keywords": [ "buster" ],
     "type": "override",
-    "file": "Matrix.txt"
+    "file": "EasterEggs/Buster.txt"
   },
   {
-    "keywords": [ "netflix" ],
+    "keywords": [ "event", "events", "care for", "magical", "creatures", "dragons", "october", "wednesday" ],
     "type": "append",
-    "file": "Netflix.txt"
+    "file": "Events/CareOfMagicalCreatures.txt"
   },
   {
-    "keywords": [ "redbox", "red box" ],
+    "keywords": [ "event", "events", "dueling", "wednsday", "september", "saturday" ],
     "type": "append",
-    "file": "Redbox.txt"
+    "file": "Events/DuelingClub.txt"
   },
   {
-    "keywords": [ "late fee" ],
+    "keywords": [ "event", "events", "hogsmeade", "halloween", "friday", "october" ],
     "type": "append",
-    "file": "LateFee.txt"
+    "file": "Events/HogsmeadeHalloween.txt"
   },
   {
-    "keywords": [ "return policy", "refund" ],
+    "keywords": [ "event", "events", "library", "november", "thursday", "research" ],
     "type": "append",
-    "file": "ReturnPolicy.txt"
-  },
-  {
-    "keywords": [ "cancel", "membership" ],
-    "type": "append",
-    "file": "CancelMembership.txt"
-  },
-  {
-    "keywords": [ "membership" ],
-    "type": "append",
-    "file": "Membership.txt"
-  },
-  {
-    "keywords": [ "movie", "price", "how much" ],
-    "type": "append",
-    "file": "Membership.txt"
+    "file": "Events/LibraryLockIn.txt"
   }
 ]

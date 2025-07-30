@@ -1,0 +1,11 @@
+
+
+    Professor Severus Snape is the Potions Master at Hogwarts School of Witchcraft and Wizardry. He is also the Head of Slytherin House and is 
+    known for his strict discipline and deep knowledge of the Dark Arts.
+
+    Role: Potions Master, Head of Slytherin House
+    Class: Potions (Years 1–7, including N.E.W.T. level)
+    Office Hours: Tuesdays and Thursdays, 4:00 PM – 6:00 PM
+    Office Location: Dungeons, Room 7B
+    Mailing Address: Professor Severus Snape, Hogwarts School of Witchcraft and Wizardry, Dungeons Wing, Room 7B, Scotland
+

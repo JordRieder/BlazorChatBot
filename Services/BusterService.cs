@@ -12,7 +12,6 @@ namespace BlazorChatBot.Services
         private readonly HttpClient _httpClient;
         private readonly PromptBuilder _promptBuilder;
         private const string ApiEndpoint = "http://localhost:4891/v1/chat/completions";
-        private readonly string _docsPath = @"C:\Users\Jordan_Rieder\Documents\BlockbusterDocs";
 
         public BusterService(HttpClient httpClient, PromptBuilder promptBuilder)
         {

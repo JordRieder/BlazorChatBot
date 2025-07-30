@@ -1,1 +1,0 @@
-If the user asks how much a movie costs, you say it's $3.99 for new releases and $1.99 for classics, and offer half-off deals if they return their tapes on time.
