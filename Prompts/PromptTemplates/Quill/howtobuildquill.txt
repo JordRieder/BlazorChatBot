@@ -1,0 +1,78 @@
+HOW TO BUILD QUILL – A RAG SYSTEM USING BLAZOR AND POSTGRESQL
+
+Overview:
+Quill is a Retrieval-Augmented Generation (RAG) system built using Blazor Server, PostgreSQL with pgvector, and a language model such as GPT-3.5 or GPT-4 Turbo. It retrieves semantically relevant documents from a vector database and injects them into prompts to improve response accuracy.
+
+System Components:
+- Blazor Server App (.NET 7 or .NET 8)
+- PostgreSQL with pgvector extension
+- Ollama or other embedding model
+- GPT-3.5 Turbo or GPT-4 Turbo via API
+- Entity Framework Core with Npgsql
+
+Step-by-Step Guide:
+
+1. Install PostgreSQL and pgvector
+- Ensure PostgreSQL is installed.
+- Enable pgvector extension:
+  Command: CREATE EXTENSION IF NOT EXISTS vector;
+
+2. Create the Vector Table
+- Define a table to store documents and their embeddings:
+  CREATE TABLE documents (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    embedding VECTOR(1536)
+  );
+
+3. Generate Embeddings
+- Use Ollama or another embedding model to convert documents into vectors.
+- Example: ollama run embed "Your document text here"
+- Store the resulting float[] vector in the PostgreSQL table.
+
+4. Set Up Blazor Backend
+- Create a Document entity:
+  public class Document {
+    public int Id { get; set; }
+    public string Content { get; set; }
+    public float[] Embedding { get; set; }
+  }
+
+- Configure DbContext:
+  public class RagDbContext : DbContext {
+    public DbSet<Document> Documents { get; set; }
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
+      => options.UseNpgsql("Host=localhost;Database=yourdb;Username=youruser;Password=yourpass");
+  }
+
+5. Perform Vector Search
+- Use cosine similarity to find relevant documents:
+  SQL: SELECT * FROM documents ORDER BY embedding <=> '[query_vector]'::vector LIMIT 5;
+
+- In C#:
+  using var conn = new NpgsqlConnection(connectionString);
+  await conn.OpenAsync();
+  var cmd = new NpgsqlCommand("SELECT content FROM documents ORDER BY embedding <=> @query LIMIT 5", conn);
+  cmd.Parameters.AddWithValue("query", queryVector);
+  using var reader = await cmd.ExecuteReaderAsync();
+  while (await reader.ReadAsync()) {
+    var content = reader.GetString(0);
+    // Use this content in your GPT prompt
+  }
+
+6. Inject Context into GPT Prompt
+- Format the prompt with retrieved content:
+  var prompt = $"You are an assistant. Use the following context to answer the user's question:\n\n{retrievedContent}";
+
+- Send the prompt and user message to GPT-3.5 or GPT-4 Turbo via API.
+
+7. Build the Blazor UI
+- Create a form for user input and display the GPT response:
+  <InputText @bind-Value="userQuery" />
+  <button @onclick="SendQuery">Ask</button>
+  <p>@gptResponse</p>
+
+Summary:
+Quill combines semantic search with language generation. Documents are embedded into vectors, stored in PostgreSQL, and retrieved based on similarity to user queries. Retrieved content is injected into prompts to guide GPT responses. The system is built using Blazor for UI and backend logic, PostgreSQL for vector storage, and Ollama for embedding.
+
+End of Guide.

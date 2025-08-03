@@ -20,7 +20,7 @@ namespace BlazorChatBot.Services
         }
 
 
-        public async Task<string> AskAsync(string userMessage)
+        public async Task<string> AskAsync(string userMessage, string context)
         {
             var prompt = _promptBuilder.Build(userMessage);
 
@@ -53,6 +53,11 @@ namespace BlazorChatBot.Services
                 .GetString();
 
             return reply ?? "No response from model.";
+        }
+
+        public IAsyncEnumerable<string> StreamResponseAsync(string userMessage, string context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

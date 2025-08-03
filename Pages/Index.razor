@@ -1,41 +1,24 @@
 ﻿@page "/"
+@using System.Text
+@using System.Text.RegularExpressions
 @using BlazorChatBot.Services
-@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
 @inject IChatBotService ChatBotService
-@inject RagDatabaseService RagService
+@inject IJSRuntime JSRuntime
 
 <h2 class="hogwarts-title">🪄 Speak with Quill</h2>
 <h3 style="text-align: center; color: black;">
     <em>Your Hogwarts AI companion, a data-driven LLM.</em>
 </h3>
 
-<!-- Document Import Section -->
-<div class="import-section" style="margin-bottom: 20px; text-align: center;">
-    <div class="import-controls">
-        <InputFile OnChange="HandleFileSelection" multiple accept=".txt" />
-
-        @if (!string.IsNullOrEmpty(importStatus))
-        {
-            <div class="import-status @(importSuccess ? "success" : "error")" style="margin-top: 10px;">
-                @importStatus
-            </div>
-        }
-
-        @if (documentCount > 0)
-        {
-            <div class="document-info" style="margin-top: 10px; color: #666;">
-                📚 Documents in knowledge base: @documentCount
-            </div>
-        }
-    </div>
-</div>
-
 <div class="chat-container">
-    <div class="chat-box">
+    <div class="chat-box" @ref="chatBoxRef">
         @foreach (var message in messages)
         {
             <div class="@($"message {(message.IsUser ? "student" : "quill")}")">
-                <strong>@(message.IsUser ? "You" : "Quill"):</strong> @((MarkupString)message.Text)
+                <div class="message-content">
+                    @((MarkupString)RenderMessage(message.Text))
+                </div>
             </div>
         }
     </div>
@@ -45,197 +28,52 @@
     </div>
 </div>
 
-<style>
-    .import-section {
-        border: 2px dashed #8B4513;
-        border-radius: 10px;
-        padding: 20px;
-        background: linear-gradient(135deg, #f4f1e8 0%, #e8dcc0 100%);
-        margin: 20px 0;
-    }
-
-        .import-section input[type="file"] {
-            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
-            width: auto;
-        }
-
-            .import-section input[type="file"]:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(139, 69, 19, 0.4);
-            }
-
-            .import-section input[type="file"]::file-selector-button {
-                background: transparent;
-                border: none;
-                color: white;
-                font-weight: bold;
-                cursor: pointer;
-                padding: 0;
-                margin-right: 10px;
-            }
-
-    .import-status {
-        padding: 10px;
-        border-radius: 5px;
-        font-weight: bold;
-    }
-
-        .import-status.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .import-status.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-    .document-info {
-        font-style: italic;
-        font-size: 14px;
-    }
-</style>
-
 @code {
     private string userInput = string.Empty;
     private List<ChatMessage> messages = new();
-    private bool isImporting = false;
-    private string importStatus = string.Empty;
-    private bool importSuccess = false;
-    private int documentCount = 0;
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Load initial document count
-        await LoadDocumentCount();
-    }
-
-    private async Task HandleFileSelection(InputFileChangeEventArgs e)
-    {
-        if (e.FileCount == 0) return;
-
-        isImporting = true;
-        importStatus = "📚 Processing files...";
-        StateHasChanged();
-
-        try
-        {
-            var importedCount = 0;
-            var skippedCount = 0;
-            var errorCount = 0;
-
-            foreach (var file in e.GetMultipleFiles(10)) // Limit to 10 files
-            {
-                try
-                {
-                    if (!file.Name.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue; // Skip non-txt files
-                    }
-
-                    using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB limit
-                    using var reader = new StreamReader(stream);
-                    var content = await reader.ReadToEndAsync();
-
-                    if (string.IsNullOrWhiteSpace(content))
-                    {
-                        skippedCount++;
-                        continue;
-                    }
-
-                    // Check if document already exists
-                    if (await RagService.DocumentExistsAsync(content))
-                    {
-                        skippedCount++;
-                        continue;
-                    }
-
-                    // Import the document
-                    await RagService.InsertDocumentWithVectorAsync(content);
-                    importedCount++;
-
-                    // Update status during import
-                    importStatus = $"📚 Imported {importedCount} documents...";
-                    StateHasChanged();
-                }
-                catch (Exception ex)
-                {
-                    errorCount++;
-                    Console.WriteLine($"Error importing file {file.Name}: {ex.Message}");
-                }
-            }
-
-            // Final status message
-            var statusParts = new List<string>();
-
-            if (importedCount > 0)
-                statusParts.Add($"✅ {importedCount} document{(importedCount == 1 ? "" : "s")} imported");
-
-            if (skippedCount > 0)
-                statusParts.Add($"⏭️ {skippedCount} skipped (duplicates or empty)");
-
-            if (errorCount > 0)
-                statusParts.Add($"❌ {errorCount} failed");
-
-            importStatus = statusParts.Any() ? string.Join(" | ", statusParts) : "No files processed";
-            importSuccess = importedCount > 0;
-
-            // Refresh document count
-            await LoadDocumentCount();
-        }
-        catch (Exception ex)
-        {
-            importStatus = $"❌ Import failed: {ex.Message}";
-            importSuccess = false;
-        }
-        finally
-        {
-            isImporting = false;
-            StateHasChanged();
-
-            // Clear status after a few seconds
-            _ = Task.Delay(5000).ContinueWith(_ =>
-            {
-                importStatus = string.Empty;
-                InvokeAsync(StateHasChanged);
-            });
-        }
-    }
-
-    private async Task LoadDocumentCount()
-    {
-        try
-        {
-            documentCount = await RagService.GetDocumentCountAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading document count: {ex.Message}");
-            documentCount = 0;
-        }
-    }
+    private ElementReference chatBoxRef;
 
     private async Task SendMessage()
     {
         if (string.IsNullOrWhiteSpace(userInput)) return;
+
+        // Add user message
         messages.Add(new ChatMessage { Text = userInput, IsUser = true });
-        messages.Add(new ChatMessage { Text = "<em>✨ Quill is scribbling furiously...</em>", IsUser = false });
+
+        // Add scribbling placeholder
+        var assistantMessage = new ChatMessage { Text = "<em>✨ Quill is scribbling furiously...</em>", IsUser = false };
+        messages.Add(assistantMessage);
         StateHasChanged();
-        var response = await ChatBotService.AskAsync(userInput);
-        messages.RemoveAt(messages.Count - 1);
-        messages.Add(new ChatMessage { Text = response, IsUser = false });
+        await ScrollToBottom();
+
+        // Build context
+        var context = string.Join("\n", messages
+            .Where(m => m.IsUser || !m.Text.Contains("scribbling"))
+            .TakeLast(5)
+            .Select(m => $"{(m.IsUser ? "User" : "Quill")}: {StripHtml(m.Text)}"));
+
+        var responseBuilder = new StringBuilder();
+        var streamStarted = false;
+
+        await foreach (var token in ChatBotService.StreamResponseAsync(userInput, context))
+        {
+            if (!streamStarted)
+            {
+                // Replace scribbling message with empty assistant message
+                assistantMessage.Text = string.Empty;
+                streamStarted = true;
+            }
+
+            responseBuilder.Append(token);
+            assistantMessage.Text = responseBuilder.ToString();
+            StateHasChanged();
+            await ScrollToBottom();
+        }
+
         userInput = string.Empty;
+        StateHasChanged();
     }
+
 
     private async Task HandleKeyPress(KeyboardEventArgs e)
     {
@@ -243,6 +81,22 @@
         {
             await SendMessage();
         }
+    }
+
+    private async Task ScrollToBottom()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", chatBoxRef);
+    }
+
+    private static string StripHtml(string input)
+    {
+        return Regex.Replace(input, "<.*?>", string.Empty);
+    }
+
+    private string RenderMessage(string text)
+    {
+        var html = Markdig.Markdown.ToHtml(text);
+        return html.Trim();
     }
 
     public class ChatMessage

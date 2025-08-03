@@ -4,7 +4,7 @@ using BlazorChatBot.Services;
 
 public class GemmaService : IChatBotService
 {
-    public async Task<string> AskAsync(string prompt)
+    public async Task<string> AskAsync(string prompt, string context)
     {
         try
         {
@@ -33,5 +33,10 @@ public class GemmaService : IChatBotService
             return
                 $"⚠️ Unable to get response from Gemma. Please ensure Ollama and the 'gemma3' model are installed correctly.\nError: {ex.Message}";
         }
+    }
+
+    public IAsyncEnumerable<string> StreamResponseAsync(string userMessage, string context)
+    {
+        throw new NotImplementedException();
     }
 }

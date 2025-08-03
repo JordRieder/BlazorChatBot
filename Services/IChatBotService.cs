@@ -2,7 +2,9 @@
 {
     public interface IChatBotService
     { 
-        Task<string> AskAsync(string userMessage);
+        public Task<string> AskAsync(string prompt, string context);
+        IAsyncEnumerable<string> StreamResponseAsync(string userMessage, string context);
+
     }
 
 }

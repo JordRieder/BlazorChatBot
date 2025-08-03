@@ -1,0 +1,17 @@
+﻿📚 **Course List – Hogwarts School of Witchcraft and Wizardry**
+
+- **Charms**  
+  *Professor:* Filius Flitwick  
+  *Focus:* Spellcasting fundamentals, enchantment theory, charm innovation.
+
+- **Defense Against the Dark Arts**  
+  *Professor:* Micheal Bell  
+  *Focus:* Dark creature defense, protective spells, ethical combat.
+
+- **Potions**  
+  *Professor:* Severus Snape  
+  *Focus:* Potion brewing, ingredient mastery, magical chemistry.
+
+- **Transfiguration**  
+  *Professor:* Minerva McGonagall  
+  *Focus:* Object transformation, human transfiguration, theoretical magic.

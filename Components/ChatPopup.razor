@@ -51,7 +51,7 @@
 
         messages.Add($"You: {userInput}");
         isLoading = true;
-        var response = await ChatBotService.AskAsync(userInput);
+        var response = await ChatBotService.AskAsync(userInput, "");
         isLoading = false;
         messages.Add($"Bot: {response}");
         userInput = "";
